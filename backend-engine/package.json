@@ -9,7 +9,6 @@
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
   },
   "dependencies": {
-    "@flashbots/ethers-providers-bundle": "^0.6.2",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "ethers": "^5.7.2"

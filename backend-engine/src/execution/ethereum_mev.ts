@@ -1,7 +1,3 @@
-import { ethers } from 'ethers';
-import { FlashbotsBundleProvider } from '@flashbots/ethers-providers-bundle';
-import { NETWORKS, CONFIG } from '../config/networks';
-
 export async function executeFlashbotsCountermeasure(
     victimAddress: string,
     nonce: number,

@@ -1,3 +1,5 @@
+import { NETWORKS } from '../config/networks';
+
 export async function executeL2SequencerBlaster(
     victimAddress: string,
     networkKey: 'base' | 'robinhood'

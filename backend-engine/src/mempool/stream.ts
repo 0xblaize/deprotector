@@ -7,6 +7,10 @@ export function startMempoolStream() {
     console.log(`📡 [Mempool Streamer] Connecting to WebSocket RPC: ${NETWORKS.ethereum.wsRpc}...`);
 
     try {
+        if (!NETWORKS.ethereum.wsRpc) {
+            console.warn('[Mempool Streamer] No Ethereum WebSocket RPC configured; monitoring is disabled.');
+            return;
+        }
         const wsProvider = new ethers.providers.WebSocketProvider(NETWORKS.ethereum.wsRpc);
 
         wsProvider.on('pending', async (txHash: string) => {

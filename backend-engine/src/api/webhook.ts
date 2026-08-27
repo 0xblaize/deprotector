@@ -16,21 +16,6 @@ apiRouter.post('/telemetry/flag-threat', (req: Request, res: Response) => {
 
 apiRouter.get('/telemetry/status/:wallet', (req: Request, res: Response) => {
     const wallet = req.params.wallet.toLowerCase();
-    return res.json(HIGH_THREAT_WALLETS.has(wallet) ? { status: 'HIGH_THREAT', threatInfo: HIGH_THREAT_WALLETS.get(wallet) } : { status: 'CLEAN' });
-});
-
-apiRouter.get('/telemetry/status/:wallet', (req: Request, res: Response) => {
-    const wallet = req.params.wallet.toLowerCase();
     const threatInfo = HIGH_THREAT_WALLETS.get(wallet);
     return res.json(threatInfo ? { status: 'HIGH_THREAT', threatInfo } : { status: 'CLEAN' });
-});
-
-apiRouter.get('/telemetry/status/:wallet', (req: Request, res: Response) => {
-    const wallet = req.params.wallet.toLowerCase();
-    const threatInfo = HIGH_THREAT_WALLETS.get(wallet);
-
-    if (threatInfo) {
-        return res.json({ status: 'HIGH_THREAT', threatInfo });
-    }
-    return res.json({ status: 'CLEAN' });
 });

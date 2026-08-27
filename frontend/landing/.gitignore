@@ -2,6 +2,10 @@
 .DS_Store
 Thumbs.db
 desktop.ini
+.next/
+node_modules/
+.claude
+GEMINI.md
 
 # Environment & Secrets
 .env
@@ -23,7 +27,7 @@ dist/
 build/
 out/
 target/
-/landing/
+landing/
 *.exe
 *.dll
 *.so
