@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Access Blocked - Deprotector Security Shield</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: radial-gradient(circle at center, rgba(15, 23, 42, 0.86) 42%, #000000 66%);
+      color: #f3f4f6;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .card {
+      background: #111827;
+      border: 1px solid #dc2626;
+      border-radius: 12px;
+      padding: 40px;
+      max-width: 560px;
+      width: 100%;
+      box-shadow: 0 20px 25px -5px rgba(220, 38, 38, 0.25);
+      text-align: center;
+    }
+    .icon-wrapper {
+      margin: 0 auto 20px;
+      width: 64px;
+      height: 64px;
+      background: rgba(220, 38, 38, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .icon-wrapper svg {
+      width: 36px;
+      height: 36px;
+      stroke: #ef4444;
+    }
+    h1 { font-size: 24px; font-weight: 700; color: #f87171; margin-bottom: 12px; }
+    p { font-size: 15px; color: #9ca3af; line-height: 1.6; margin-bottom: 24px; }
+    .domain-tag {
+      display: inline-block;
+      background: #1f2937;
+      color: #f87171;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-family: monospace;
+      font-size: 14px;
+      margin-bottom: 24px;
+      border: 1px solid #374151;
+    }
+    .actions { display: flex; gap: 12px; justify-content: center; }
+    button {
+      background: #dc2626;
+      color: #ffffff;
+      border: none;
+      padding: 12px 24px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #b91c1c; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon-wrapper">
+      <!-- Shield Alert SVG Icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </div>
+    <h1>Access Blocked by Deprotector</h1>
+    <p>The website you attempted to visit has been identified as a malicious Web3 Phishing / Wallet Drainer Portal.</p>
+    <div class="domain-tag" id="domain-display">phishing-portal.com</div>
+    <div class="actions">
+      <button onclick="window.history.back()">Return to Safety</button>
+    </div>
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const domain = params.get('domain') || 'Unknown Malicious Target';
+    document.getElementById('domain-display').textContent = domain;
+  </script>
+</body>
+</html>

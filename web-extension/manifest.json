@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Deprotector Anti-Drainer Shield",
+  "version": "1.0.0",
+  "description": "Real-time Web3 Phishing Shield & Counter-Drainer Telemetry Bridge",
+  "permissions": [
+    "tabs",
+    "storage",
+    "webNavigation",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": "icons/shield-icon.png"
+  },
+  "icons": {
+    "16": "icons/shield-icon.png",
+    "48": "icons/shield-icon.png",
+    "128": "icons/shield-icon.png"
+  }
+}

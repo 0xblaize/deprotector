@@ -1,0 +1,55 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Dependencies
+node_modules/
+bower_components/
+vendor/
+venv/
+.venv/
+env/
+
+# Build & Output Directories
+dist/
+build/
+out/
+target/
+landing/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Logs & Debugging
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+
+# Cache & Temporary Files
+.cache/
+.pytest_cache/
+__pycache__/
+*.pyc
+.tmp/
+tmp/
+
+# IDEs and Editors
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Antigravity & Agent Temporary Data
+.gemini/
+.brain/

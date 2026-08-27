@@ -1,0 +1,29 @@
+{
+  "name": "deprotector-ecosystem",
+  "version": "1.0.0",
+  "description": "Automated Counter-Drainer Engine & Multi-Chain Anti-Drainer Security System",
+  "private": true,
+  "workspaces": [
+    "frontend/*"
+  ],
+  "scripts": {
+    "start:backend":   "cd backend-engine && npm start",
+    "dev:backend":     "cd backend-engine && npm run dev",
+    "build:contracts": "cd smart-contracts && npm run build",
+    "dev:landing":     "cd frontend/landing && npm run dev",
+    "build:landing":   "cd frontend/landing && npm run build"
+  },
+  "keywords": [
+    "security",
+    "crypto",
+    "anti-drainer",
+    "evm",
+    "flashbots",
+    "mev",
+    "ethereum",
+    "base",
+    "robinhood"
+  ],
+  "author": "",
+  "license": "MIT"
+}
