@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   saveBtn.addEventListener("click", () => {
-    const apiUrl = document.getElementById("apiUrl").value;
+    const apiUrl = document.getElementById("apiUrl").value.replace(/\/$/, '');
     const blocklistShield = document.getElementById("blocklistShield").checked;
     const heuristicShield = document.getElementById("heuristicShield").checked;
 
