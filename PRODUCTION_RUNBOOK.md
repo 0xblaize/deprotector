@@ -239,8 +239,7 @@ Install and test:
 
 ```bash
 npm --prefix smart-contracts install
-npm --prefix smart-contracts run build
-npm --prefix smart-contracts test
+npm --prefix smart-contracts run preflight
 ```
 
 For testnet deployment, configure a separate contract environment:

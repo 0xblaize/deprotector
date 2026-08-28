@@ -5,6 +5,7 @@
   "scripts": {
     "build": "hardhat compile",
     "test": "hardhat test",
+    "preflight": "hardhat compile && hardhat test",
     "deploy": "hardhat run scripts/deploy.ts --network botchain"
   },
   "devDependencies": {

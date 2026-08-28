@@ -1,48 +1,48 @@
 import { ethers } from 'hardhat';
 import { expect } from 'chai';
 
-describe('GuardWallet Smart Account', function () {
-    let owner: any;
-    let guardian: any;
-    let victim: any;
-    let safeVault: any;
-    let guardWallet: any;
+describe('GuardWallet', function () {
+  async function deploy() {
+    const [owner, guardian, recipient] = await ethers.getSigners();
+    const tokenGuard = await ethers.deployContract('TokenGuard');
+    await tokenGuard.waitForDeployment();
+    const wallet = await ethers.deployContract('GuardWallet', [owner.address, guardian.address]);
+    await wallet.waitForDeployment();
+    await wallet.setTokenGuard(await tokenGuard.getAddress());
+    await wallet.setRescueVault(recipient.address);
+    return { owner, guardian, recipient, tokenGuard, wallet };
+  }
 
-    beforeEach(async function () {
-        [owner, guardian, victim, safeVault] = await ethers.getSigners();
+  it('allows the owner to execute when unfrozen', async function () {
+    const { owner, recipient, wallet } = await deploy();
+    await owner.sendTransaction({ to: await wallet.getAddress(), value: ethers.parseEther('0.1') });
+    await wallet.connect(owner).execute(recipient.address, ethers.parseEther('0.1'), '0x');
+    expect(await ethers.provider.getBalance(await wallet.getAddress())).to.equal(0);
+  });
 
-        const GuardWalletFactory = await ethers.getContractFactory('GuardWallet');
-        guardWallet = await GuardWalletFactory.deploy(owner.address, guardian.address);
-        await guardWallet.waitForDeployment();
-    });
+  it('freezes owner execution and allows only the owner to unfreeze', async function () {
+    const { owner, guardian, wallet } = await deploy();
+    await wallet.connect(guardian).emergencyFreeze();
+    await expect(wallet.connect(owner).execute(owner.address, 0, '0x')).to.be.revertedWith('GuardWallet: wallet is frozen');
+    await expect(wallet.connect(guardian).unfreeze()).to.be.revertedWith('GuardWallet: caller is not the owner');
+    await wallet.connect(owner).unfreeze();
+    expect(await wallet.isFrozen()).to.equal(false);
+  });
 
-    it('Should allow owner to execute transactions when not frozen', async function () {
-        const tx = await guardWallet.connect(owner).execute(victim.address, ethers.parseEther('0.1'), '0x', {
-            value: ethers.parseEther('0.1')
-        });
-        await tx.wait();
-        expect(await ethers.provider.getBalance(guardWallet.target)).to.equal(0);
-    });
+  it('sweeps native funds only to the configured vault while frozen', async function () {
+    const { owner, guardian, recipient, wallet } = await deploy();
+    await owner.sendTransaction({ to: await wallet.getAddress(), value: ethers.parseEther('1') });
+    await wallet.connect(guardian).emergencyFreeze();
+    await wallet.connect(guardian).emergencySweepToken(ethers.ZeroAddress, 0);
+    expect(await ethers.provider.getBalance(await wallet.getAddress())).to.equal(0);
+    expect(await ethers.provider.getBalance(recipient.address)).to.be.greaterThan(0);
+  });
 
-    it('Should allow guardian to trigger emergency freeze', async function () {
-        await guardWallet.connect(guardian).emergencyFreeze();
-        expect(await guardWallet.isFrozen()).to.be.true;
-
-        // Owner execution must fail when contract is frozen
-        await expect(
-            guardWallet.connect(owner).execute(victim.address, 0, '0x')
-        ).to.be.revertedWith('GuardWallet: contract is frozen due to high threat state');
-    });
-
-    it('Should allow guardian to sweep native funds to safe vault during attack', async function () {
-        // Send ETH to GuardWallet
-        await owner.sendTransaction({
-            to: guardWallet.target,
-            value: ethers.parseEther('1.0')
-        });
-
-        // Guardian sweeps funds to vault
-        await guardWallet.connect(guardian).emergencySweepToken(ethers.ZeroAddress, safeVault.address, ethers.parseEther('1.0'));
-        expect(await ethers.provider.getBalance(guardWallet.target)).to.equal(0);
-    });
+  it('rejects blacklisted approval spenders', async function () {
+    const { owner, tokenGuard, wallet } = await deploy();
+    const spender = ethers.Wallet.createRandom().address;
+    await tokenGuard.setSpenderStatus(spender, true);
+    const approvalData = ethers.concat(['0x095ea7b3', ethers.zeroPadValue(spender, 32), ethers.zeroPadValue('0x01', 32)]);
+    await expect(wallet.connect(owner).execute(ethers.Wallet.createRandom().address, 0, approvalData)).to.be.revertedWith('GuardWallet: blacklisted spender');
+  });
 });
