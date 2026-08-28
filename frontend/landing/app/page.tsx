@@ -43,8 +43,8 @@ export default function Home() {
     <div className="scrim" />
     <div className="frame">
       <header><a href="/" className="logo" aria-label="Deprotector home"><Mark /></a>
-        <nav aria-label="Primary navigation"><a className="active" href="/">Security</a><a href="/phishing-shield">Phishing shield <small>⌄</small></a><a href="/auto-revoke">Auto-revoke <small>⌄</small></a><a href="/dashboard">Dashboard</a></nav>
-        <Button children="Secure system" />
+        <nav aria-label="Primary navigation"><a className="active" href="/">Security</a><a href="/phishing-shield">Phishing shield <small>⌄</small></a><a href="/auto-revoke">Auto-revoke <small>⌄</small></a><a href="/extension">Extension</a></nav>
+        <Button children="Secure wallet" />
         <button className={`burger ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen}><i /><i /><i /></button>
       </header>
       <section className="hero"><h1><span>Security built into</span><span>every Onchain layer</span></h1><p>Engineered to stay resilient, controlled,<br />and uncompromised under pressure.</p><Button children="Secure wallet" /></section>
