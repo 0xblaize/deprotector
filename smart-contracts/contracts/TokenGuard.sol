@@ -28,10 +28,9 @@ contract TokenGuard {
 
     function batchSetSpenderStatus(address[] calldata spenders, bool blacklisted) external onlyAdmin {
         for (uint256 i = 0; i < spenders.length; i++) {
-            if (spenders[i] != address(0)) {
-                isBlacklistedSpender[spenders[i]] = blacklisted;
-                emit SpenderBlacklisted(spenders[i], blacklisted);
-            }
+            require(spenders[i] != address(0), "TokenGuard: invalid spender");
+            isBlacklistedSpender[spenders[i]] = blacklisted;
+            emit SpenderBlacklisted(spenders[i], blacklisted);
         }
     }
 }

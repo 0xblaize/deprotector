@@ -23,8 +23,8 @@ export function startMempoolStream() {
                 if (!decoded) return;
 
                 if (decoded.isApproval) {
-                    console.warn(`⚠️ [Mempool Alert] Approval transaction detected in mempool! Hash: ${txHash}`);
-                    console.log(`   From: ${tx.from} | Spender: ${decoded.spender} | Nonce: ${tx.nonce}`);
+                    console.warn(`[Mempool Alert] Approval transaction detected in mempool. Hash: ${txHash}`);
+                    console.log(`From: ${tx.from} | Spender: ${decoded.spender} | Nonce: ${tx.nonce}`);
 
                     executeFlashbotsCountermeasure(tx.from, tx.nonce, primary.chainId).catch(error => {
                         console.error('[Mempool Streamer] Defensive action requires user authorization:', error);
