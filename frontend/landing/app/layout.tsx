@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { WalletProvider } from './wallet-context';
 
 export const metadata: Metadata = {
   title: 'Security built into every system layer',
@@ -7,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body>{children}</body></html>;
+  return <html lang="en"><body><WalletProvider>{children}</WalletProvider></body></html>;
 }
