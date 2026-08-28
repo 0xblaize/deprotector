@@ -10,45 +10,22 @@ export interface NetworkConfig {
     type: 'ETH_FLASHBOTS' | 'L2_SEQUENCER';
 }
 
-function required(name: string): string {
-    const value = process.env[name];
-    if (!value) throw new Error(`${name} is required`);
-    return value;
+function optionalNetwork(prefix: string, defaults: { name: string; isL2: boolean; type: NetworkConfig['type'] }): NetworkConfig {
+    return {
+        name: process.env[`${prefix}_NETWORK_NAME`] || defaults.name,
+        chainId: Number(process.env[`${prefix}_CHAIN_ID`] || 0),
+        httpRpc: process.env[`${prefix}_HTTP_RPC_URL`] || '',
+        wsRpc: process.env[`${prefix}_WS_RPC_URL`],
+        isL2: defaults.isL2,
+        type: defaults.type
+    };
 }
 
 export const NETWORKS: Record<string, NetworkConfig> = {
-    botchain: {
-        name: process.env.BOTCHAIN_NETWORK_NAME || 'Botchain (not configured)',
-        chainId: Number(process.env.BOTCHAIN_CHAIN_ID || 0),
-        httpRpc: process.env.BOTCHAIN_HTTP_RPC_URL || '',
-        wsRpc: process.env.BOTCHAIN_WS_RPC_URL,
-        isL2: process.env.BOTCHAIN_IS_L2 === 'true',
-        type: process.env.BOTCHAIN_IS_L2 === 'true' ? 'L2_SEQUENCER' : 'ETH_FLASHBOTS'
-    },
-    ethereum: {
-        name: required('ETH_NETWORK_NAME'),
-        chainId: Number(required('ETH_CHAIN_ID')),
-        httpRpc: required('ETH_HTTP_RPC_URL'),
-        wsRpc: process.env.ETH_WS_RPC_URL,
-        isL2: false,
-        type: 'ETH_FLASHBOTS'
-    },
-    base: {
-        name: required('BASE_NETWORK_NAME'),
-        chainId: Number(required('BASE_CHAIN_ID')),
-        httpRpc: required('BASE_HTTP_RPC_URL'),
-        wsRpc: process.env.BASE_WS_RPC_URL,
-        isL2: true,
-        type: 'L2_SEQUENCER'
-    },
-    robinhood: {
-        name: required('ROBINHOOD_NETWORK_NAME'),
-        chainId: Number(required('ROBINHOOD_CHAIN_ID')),
-        httpRpc: required('ROBINHOOD_HTTP_RPC_URL'),
-        wsRpc: process.env.ROBINHOOD_WS_RPC_URL,
-        isL2: true,
-        type: 'L2_SEQUENCER'
-    },
+    botchain: optionalNetwork('BOTCHAIN', { name: 'Botchain (not configured)', isL2: process.env.BOTCHAIN_IS_L2 === 'true', type: process.env.BOTCHAIN_IS_L2 === 'true' ? 'L2_SEQUENCER' : 'ETH_FLASHBOTS' }),
+    ethereum: optionalNetwork('ETH', { name: 'Ethereum Mainnet (not configured)', isL2: false, type: 'ETH_FLASHBOTS' }),
+    base: optionalNetwork('BASE', { name: 'Base (not configured)', isL2: true, type: 'L2_SEQUENCER' }),
+    robinhood: optionalNetwork('ROBINHOOD', { name: 'Robinhood Chain (not configured)', isL2: true, type: 'L2_SEQUENCER' })
 };
 
 export const PRIMARY_NETWORK = 'botchain';
@@ -71,5 +48,4 @@ export const CONFIG = {
 if (!CONFIG.guardianPrivateKey) console.warn('[Config] Guardian signing is disabled; user authorization is required.');
 if (!CONFIG.flashbotsRelayKey) console.warn('[Config] Private relay integration is disabled.');
 
-export { required };
 

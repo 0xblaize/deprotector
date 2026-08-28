@@ -24,12 +24,6 @@
   ],
   "options_page": "options/options.html",
   "action": {
-    "default_popup": "popup/popup.html",
-    "default_icon": "icons/shield-icon.png"
-  },
-  "icons": {
-    "16": "icons/shield-icon.png",
-    "48": "icons/shield-icon.png",
-    "128": "icons/shield-icon.png"
+    "default_popup": "popup/popup.html"
   }
 }

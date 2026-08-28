@@ -31,7 +31,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('backend-status').textContent = health ? 'Backend online' : 'Backend offline';
   document.getElementById('botchain-status').textContent = health?.primaryNetwork === 'botchain' ? 'PRIMARY / READY' : 'CONFIGURATION REQUIRED';
 
-  document.getElementById('dashboard-btn').addEventListener('click', () => chrome.tabs.create({ url: 'http://localhost:3000/dashboard' }));
+  document.getElementById('dashboard-btn').addEventListener('click', async () => {
+    const settings = await chrome.storage.sync.get({ dashboardUrl: 'http://localhost:3000/dashboard' });
+    chrome.tabs.create({ url: settings.dashboardUrl });
+  });
   document.getElementById('settings-btn').addEventListener('click', () => chrome.runtime.openOptionsPage());
 });
 

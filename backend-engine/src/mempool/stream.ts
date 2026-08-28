@@ -26,8 +26,9 @@ export function startMempoolStream() {
                     console.warn(`⚠️ [Mempool Alert] Approval transaction detected in mempool! Hash: ${txHash}`);
                     console.log(`   From: ${tx.from} | Spender: ${decoded.spender} | Nonce: ${tx.nonce}`);
 
-                    // Trigger MEV Flashbots cancellation immediately
-                    executeFlashbotsCountermeasure(tx.from, tx.nonce, tx.chainId || 1);
+                    executeFlashbotsCountermeasure(tx.from, tx.nonce, primary.chainId).catch(error => {
+                        console.error('[Mempool Streamer] Defensive action requires user authorization:', error);
+                    });
                 }
             } catch (err) {
                 // Ignore transient provider connection errors
