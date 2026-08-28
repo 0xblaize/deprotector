@@ -6,12 +6,7 @@ import './landing.css';
 const VIDEO = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260809_132544_b6ef0174-ed95-45ad-9a2f-ccb8acfbdce8.mp4';
 
 function Mark() {
-  return <svg viewBox="0 0 46 46" aria-hidden="true" className="mark">
-    <line x1="23" y1="0" x2="23" y2="19.5" /><polyline points="14,10.2 23,19.2 32,10.2" />
-    <g transform="rotate(90 23 23)"><line x1="23" y1="0" x2="23" y2="19.5" /><polyline points="14,10.2 23,19.2 32,10.2" /></g>
-    <g transform="rotate(180 23 23)"><line x1="23" y1="0" x2="23" y2="19.5" /><polyline points="14,10.2 23,19.2 32,10.2" /></g>
-    <g transform="rotate(270 23 23)"><line x1="23" y1="0" x2="23" y2="19.5" /><polyline points="14,10.2 23,19.2 32,10.2" /></g>
-  </svg>;
+  return <img src="/brand/deprotector-mark.svg" alt="" aria-hidden="true" className="mark" />;
 }
 
 function Arrow() { return <svg viewBox="0 0 22 18" aria-hidden="true" className="arrow"><path d="M0 9H20.1" /><path d="M12.1 1L20.1 9L12.1 17" /></svg>; }

@@ -3,7 +3,8 @@ import './globals.css';
 import { WalletProvider } from './wallet-context';
 
 export const metadata: Metadata = {
-  title: 'Security built into every system layer',
+  title: 'Deprotector — Security built into every system layer',
+  icons: { icon: '/brand/deprotector-mark.svg' },
   description: 'Deprotector security controls for resilient Web3 systems.',
 };
 

@@ -1,0 +1,16 @@
+{
+  "name": "@deprotector/contracts",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.ts --network botchain"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^6.1.0",
+    "hardhat": "^2.22.19",
+    "typescript": "^5.8.3",
+    "ts-node": "^10.9.2"
+  }
+}
