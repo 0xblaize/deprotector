@@ -4,7 +4,7 @@ import { WalletProvider } from './wallet-context';
 
 export const metadata: Metadata = {
   title: 'Deprotector — Security built into every system layer',
-  icons: { icon: '/brand/deprotector-mark.svg' },
+  icons: { icon: [{ url: '/brand/favicon-32.png', sizes: '32x32', type: 'image/png' }, { url: '/brand/deprotector-mark.svg', type: 'image/svg+xml' }] },
   description: 'Deprotector security controls for resilient Web3 systems.',
 };
 
