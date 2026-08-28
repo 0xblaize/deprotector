@@ -1,6 +1,6 @@
 # Deprotector: Multi-Chain Anti-Drainer Security Engine
 
-**Deprotector** is an **Automated Revocation & Counter-Drainer Engine** built to protect Web3 users against malicious wallet drainers, deceptive token approvals (`approve`, `setApprovalForAll`, `increaseAllowance`, `permit`), and phishing sites across **Ethereum Mainnet**, **Base L2**, and **Robinhood Chain (Arbitrum Orbit L2)**.
+**Deprotector** is a defensive phishing, approval-monitoring, and user-authorized revocation platform for configured EVM networks. It helps users identify malicious approvals and suspicious sites without custody of private keys.
 
 ---
 

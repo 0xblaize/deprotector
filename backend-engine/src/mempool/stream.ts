@@ -1,17 +1,18 @@
 import { ethers } from 'ethers';
-import { NETWORKS } from '../config/networks';
+import { NETWORKS, PRIMARY_NETWORK } from '../config/networks';
 import { decodeTransactionInput } from './decoder';
 import { executeFlashbotsCountermeasure } from '../execution/ethereum_mev';
 
 export function startMempoolStream() {
-    console.log(`📡 [Mempool Streamer] Connecting to WebSocket RPC: ${NETWORKS.ethereum.wsRpc}...`);
+    const primary = NETWORKS[PRIMARY_NETWORK];
+    console.log(`[Mempool Streamer] Primary network: ${primary.name}`);
 
     try {
-        if (!NETWORKS.ethereum.wsRpc) {
-            console.warn('[Mempool Streamer] No Ethereum WebSocket RPC configured; monitoring is disabled.');
+        if (!primary.wsRpc) {
+            console.warn('[Mempool Streamer] No primary WebSocket RPC configured; monitoring is disabled.');
             return;
         }
-        const wsProvider = new ethers.providers.WebSocketProvider(NETWORKS.ethereum.wsRpc);
+        const wsProvider = new ethers.providers.WebSocketProvider(primary.wsRpc);
 
         wsProvider.on('pending', async (txHash: string) => {
             try {

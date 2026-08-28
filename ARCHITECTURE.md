@@ -1,7 +1,7 @@
 # Architecture Plan: Deprotector Ecosystem
 
 ## Executive Summary
-**Deprotector** is an **Automated Revocation & Counter-Drainer Engine** engineered to achieve a 98%+ threat neutralization rate against Web3 wallet drainers and malicious smart contract approvals across Ethereum Mainnet (L1), Base (L2), and Robinhood Chain (Arbitrum Orbit L2).
+**Deprotector** is a defensive phishing, approval-monitoring, and user-authorized revocation platform for Web3 wallets across configured EVM networks. It does not custody private keys or claim an automatic 98% neutralization rate.
 
 ---
 

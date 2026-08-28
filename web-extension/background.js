@@ -1,78 +1,76 @@
-// Deprotector Service Worker Background Script
+const DEFAULT_API_BASE_URL = 'http://localhost:4000';
+let BANNED_DOMAINS = [];
 
-const BACKEND_ENGINE_URL = "http://localhost:4000/api/telemetry/flag-threat";
+async function getSettings() {
+  return chrome.storage.sync.get({
+    apiBaseUrl: DEFAULT_API_BASE_URL,
+    blocklistShield: true,
+    heuristicShield: true
+  });
+}
 
-let BANNED_DOMAINS = [
-  "metamask-airdrop-claim.com",
-  "free-bored-ape-mint.net",
-  "blur-rewards-claim.xyz",
-  "drainer-kit-test.xyz",
-  "claim-pepe-tokens.info",
-  "uniswap-v4-early-access.com",
-  "opensea-verification-pass.net",
-  "phantom-solana-airdrop.org",
-  "robinhood-crypto-claim.xyz",
-  "base-l2-bridge-rewards.com"
-];
-
-// Fetch dynamic blocklist on startup
 async function refreshBlocklist() {
   try {
-    const res = await fetch(chrome.runtime.getURL("rules/blocklist.json"));
-    if (res.ok) {
-      BANNED_DOMAINS = await res.json();
-      console.log("[Deprotector Shield] Blocklist updated with", BANNED_DOMAINS.length, "domains.");
-    }
-  } catch (err) {
-    console.error("[Deprotector Shield] Failed to fetch local blocklist:", err);
+    const response = await fetch(chrome.runtime.getURL('rules/blocklist.json'));
+    if (response.ok) BANNED_DOMAINS = await response.json();
+  } catch (error) {
+    console.warn('[Deprotector] Blocklist unavailable', error);
   }
 }
 
+function normalizeHost(hostname) {
+  return hostname.replace(/^www\./, '').toLowerCase();
+}
+
+function isBlocked(hostname) {
+  const host = normalizeHost(hostname);
+  return BANNED_DOMAINS.some(domain => host === domain || host.endsWith(`.${domain}`));
+}
+
+async function recordBlockedSite() {
+  const { blockedCount = 0 } = await chrome.storage.local.get('blockedCount');
+  await chrome.storage.local.set({ blockedCount: blockedCount + 1 });
+}
+
+async function dispatchTelemetryAlert(domain, threatLevel, signatures = []) {
+  const settings = await getSettings();
+  try {
+    await fetch(`${settings.apiBaseUrl}/api/telemetry/flag-threat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ domain, threatLevel, signatures, timestamp: Date.now() })
+    });
+  } catch (error) {
+    console.warn('[Deprotector] Backend offline');
+  }
+}
+
+chrome.runtime.onInstalled.addListener(refreshBlocklist);
 refreshBlocklist();
 
-// Watch for tab navigations
-chrome.webNavigation.onBeforeNavigate.addListener((details) => {
-  if (details.frameId !== 0) return; // Main page loads only
-
+chrome.webNavigation.onBeforeNavigate.addListener(async details => {
+  if (details.frameId !== 0) return;
+  const settings = await getSettings();
+  if (!settings.blocklistShield) return;
   try {
     const url = new URL(details.url);
-    const hostname = url.hostname.replace("www.", "").toLowerCase();
-
-    if (BANNED_DOMAINS.includes(hostname)) {
-      console.warn(`[Deprotector Interceptor] Blocked malicious Web3 phishing portal: ${hostname}`);
-
-      // Dispatch alert payload to Deprotector Counter-Drainer Engine backend
-      dispatchTelemetryAlert(hostname, "HIGH_THREAT");
-
-      // Redirect browser tab to warning page
-      chrome.tabs.update(details.tabId, {
-        url: chrome.runtime.getURL("warning.html") + "?domain=" + encodeURIComponent(hostname)
-      });
-    }
-  } catch (e) {
-    console.error("[Deprotector Interceptor] URL parsing error:", e);
+    if (!isBlocked(url.hostname)) return;
+    await recordBlockedSite();
+    await dispatchTelemetryAlert(normalizeHost(url.hostname), 'HIGH_THREAT');
+    await chrome.tabs.update(details.tabId, { url: `${chrome.runtime.getURL('warning.html')}?domain=${encodeURIComponent(normalizeHost(url.hostname))}` });
+  } catch (error) {
+    console.warn('[Deprotector] Navigation check failed', error);
   }
 });
 
-// Listen for messages from content.js heuristics scanner
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message.type === "HEURISTIC_DRAINER_DETECTED") {
-    console.warn(`[Deprotector Heuristics] Drainer signatures detected on tab ${sender.tab.id}: ${message.domain}`);
-    dispatchTelemetryAlert(message.domain, "HEURISTIC_FLAG");
-    sendResponse({ status: "ACKNOWLEDGED" });
+  if (message.type === 'GET_STATUS') {
+    sendResponse({ blocked: isBlocked(message.hostname || '') });
+    return true;
+  }
+  if (message.type === 'HEURISTIC_DRAINER_DETECTED') {
+    dispatchTelemetryAlert(message.domain, 'HEURISTIC_FLAG', message.signatures || []);
+    sendResponse({ status: 'ACKNOWLEDGED' });
+    return true;
   }
 });
-
-function dispatchTelemetryAlert(domain, threatLevel) {
-  fetch(BACKEND_ENGINE_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      domain: domain,
-      threatLevel: threatLevel,
-      timestamp: Date.now()
-    })
-  }).then(res => res.json())
-    .then(data => console.log("[Deprotector Backend Response]:", data))
-    .catch(err => console.error("[Deprotector Backend Offline]:", err.message));
-}

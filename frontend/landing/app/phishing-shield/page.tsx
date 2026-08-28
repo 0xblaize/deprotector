@@ -1,0 +1,5 @@
+import '../dashboard/dashboard.css';
+
+export default function PhishingShield() {
+  return <main className="dashboard"><header className="dash-header"><a href="/" className="dash-brand">DEPROTECTOR</a><nav><a className="active" href="/phishing-shield">Phishing shield</a><a href="/auto-revoke">Auto-revoke</a><a href="/dashboard">Dashboard</a></nav><a className="connect" href="/dashboard">Open console</a></header><section className="dash-main"><p className="eyebrow">PRODUCT / BROWSER DEFENSE</p><h1>Phishing shield</h1><p className="muted">Block known malicious domains and surface suspicious Web3 site behavior before a wallet connection or signature request.</p><section className="empty-state"><div className="empty-mark">01</div><h2>Install the browser shield</h2><p>Load the Deprotector extension in Chrome or Brave to enable local blocklist checks and heuristic warnings. The shield never needs your seed phrase or private key.</p><a className="primary" href="/dashboard">View security console</a></section></section></main>;
+}

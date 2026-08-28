@@ -2,44 +2,41 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Deprotector Security Status</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Deprotector Shield</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <div class="header">
-    <div class="logo">
-      <!-- Shield Icon SVG -->
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-      </svg>
-      <span>Deprotector Engine</span>
-    </div>
-    <span class="badge active">ACTIVE</span>
-  </div>
+  <main class="popup">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">+</span><span>DEPROTECTOR</span></div>
+      <span id="shield-badge" class="badge">CHECKING</span>
+    </header>
 
-  <div class="status-box">
-    <div class="status-indicator">
-      <span class="pulse"></span>
-      <span class="status-text">Shield Protection Live</span>
-    </div>
-    <p class="description">Monitoring mempool streams on Ethereum, Base, & Robinhood Chain.</p>
-  </div>
+    <section class="site-panel">
+      <p class="eyebrow">CURRENT SITE</p>
+      <h1 id="site-name">Checking tab...</h1>
+      <p id="site-status" class="site-status">Reading protection status</p>
+    </section>
 
-  <div class="stats">
-    <div class="stat-card">
-      <div class="stat-value" id="blocked-count">0</div>
-      <div class="stat-label">Blocked Phishing Sites</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" id="active-chain">EVM + L2</div>
-      <div class="stat-label">Guarded Networks</div>
-    </div>
-  </div>
+    <section class="signal-panel">
+      <div class="panel-heading"><span>Shield status</span><span id="backend-status" class="muted">Backend checking</span></div>
+      <div class="status-line"><span id="status-dot" class="status-dot"></span><strong id="status-title">Protection initializing</strong></div>
+      <p id="status-detail" class="detail">The extension checks known phishing domains and suspicious page signals. It never requests your seed phrase.</p>
+    </section>
 
-  <div class="footer">
-    <span>Counter-Drainer Protocol v1.0</span>
-  </div>
+    <section class="network-panel">
+      <div><p class="eyebrow">PRIMARY NETWORK</p><strong>Botchain</strong></div>
+      <span id="botchain-status" class="network-state">CONFIGURATION REQUIRED</span>
+    </section>
 
+    <div class="actions">
+      <button id="dashboard-btn" class="primary">Open security console</button>
+      <button id="settings-btn" class="secondary">Settings</button>
+    </div>
+
+    <footer><span id="blocked-count">0 blocked sites</span><span>Developer preview</span></footer>
+  </main>
   <script src="popup.js"></script>
 </body>
 </html>
