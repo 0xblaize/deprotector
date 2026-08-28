@@ -2,12 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react';
 import './landing.css';
+import Brand from './brand';
+import WalletButton from './wallet-button';
 
 const VIDEO = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260809_132544_b6ef0174-ed95-45ad-9a2f-ccb8acfbdce8.mp4';
-
-function Mark() {
-  return <img src="/brand/deprotector-mark.svg" alt="" aria-hidden="true" className="mark" />;
-}
 
 function Arrow() { return <svg viewBox="0 0 22 18" aria-hidden="true" className="arrow"><path d="M0 9H20.1" /><path d="M12.1 1L20.1 9L12.1 17" /></svg>; }
 
@@ -37,9 +35,9 @@ export default function Home() {
     <div className="bg2"><video ref={el => { videos.current[1] = el; }} autoPlay muted loop playsInline preload="auto"><source src={VIDEO} type="video/mp4" /></video></div>
     <div className="scrim" />
     <div className="frame">
-      <header><a href="/" className="logo" aria-label="Deprotector home"><Mark /></a>
+      <header><Brand />
         <nav aria-label="Primary navigation"><a className="active" href="/">Security</a><a href="/phishing-shield">Phishing shield <small>⌄</small></a><a href="/auto-revoke">Auto-revoke <small>⌄</small></a></nav>
-        <Button children="Secure wallet" />
+        <div className="header-actions"><WalletButton /><Button children="Secure wallet" /></div>
         <button className={`burger ${menuOpen ? 'open' : ''}`} onClick={() => setMenuOpen(!menuOpen)} aria-label={menuOpen ? 'Close menu' : 'Open menu'} aria-expanded={menuOpen}><i /><i /><i /></button>
       </header>
       <section className="hero"><h1><span>Security built into</span><span>every Onchain layer</span></h1><p>Engineered to stay resilient, controlled,<br />and uncompromised under pressure.</p><Button children="Secure wallet" /></section>
