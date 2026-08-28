@@ -24,6 +24,8 @@ build/
 out/
 target/
 /landing/
+frontend/.next/
+frontend/landing/.next/
 *.exe
 *.dll
 *.so

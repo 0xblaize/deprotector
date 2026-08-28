@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "npm --prefix landing run dev",
-    "build": "npm --prefix landing run build",
-    "start": "npm --prefix landing run start"
+    "build": "cd landing && next build && cd .. && node -e \"require('fs').cpSync('landing/.next','.next',{recursive:true})\"",
+    "start": "cd landing && next start"
   },
   "dependencies": {
     "next": "^15.4.0",
