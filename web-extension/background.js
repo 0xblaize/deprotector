@@ -37,7 +37,7 @@ async function dispatchTelemetryAlert(domain, threatLevel, signatures = []) {
   try {
     await fetch(`${settings.apiBaseUrl}/api/telemetry/flag-threat`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...(settings.apiKey ? { 'x-api-key': settings.apiKey } : {}) },
       body: JSON.stringify({ domain, threatLevel, signatures, timestamp: Date.now() })
     });
   } catch (error) {
