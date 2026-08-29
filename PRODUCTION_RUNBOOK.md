@@ -29,6 +29,7 @@ Set Vercel variables:
 NEXT_PUBLIC_APP_URL=https://your-website.example.com
 NEXT_PUBLIC_CHROME_WEB_STORE_URL=https://chromewebstore.google.com/detail/your-extension-id
 NEXT_PUBLIC_APPROVAL_TARGETS=token-address:spender-address:SYMBOL
+NEXT_PUBLIC_GUARD_FACTORY_ADDRESS=deployed-GuardFactory-address
 ```
 
 The Web Store variable stays empty until the extension is published. Until then, `/phishing-shield` serves the free unpackable ZIP.
