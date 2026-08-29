@@ -7,7 +7,7 @@
 .frame { position:relative; z-index:2; display:flex; flex-direction:column; height:100%; }
 header { position:relative; height:calc(58 * var(--s)); flex-shrink:0; }
 .brand-lockup { position:absolute; left:calc(60 * var(--s)); top:calc(30 * var(--s)); display:flex; align-items:center; gap:calc(12 * var(--s)); color:#fff; font:700 calc(15 * var(--s)) 'SG','Space Grotesk',sans-serif; letter-spacing:.14em; }
-.brand-mark { width:calc(45 * var(--s)); height:calc(45 * var(--s)); color:#fff; display:block; object-fit:contain; }
+.brand-mark { width:calc(45 * var(--s)); height:calc(45 * var(--s)); display:block; object-fit:contain; }
 nav { position:absolute; left:50%; top:calc(32 * var(--s)); transform:translateX(-50%); height:calc(58 * var(--s)); display:flex; align-items:center; gap:calc(40 * var(--s)); }
 .header-actions { position:absolute; right:calc(61 * var(--s)); top:calc(30 * var(--s)); display:flex; align-items:center; gap:calc(12 * var(--s)); }
 .header-actions .connect { display:flex; align-items:center; justify-content:center; padding:0 calc(14 * var(--s)); height:calc(58 * var(--s)); border:1px solid rgba(255,255,255,.28); color:#fff; background:transparent; font:400 calc(12 * var(--s)) 'JB',monospace; }
