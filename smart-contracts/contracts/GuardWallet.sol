@@ -48,11 +48,23 @@ contract GuardWallet {
         entered = false;
     }
 
-    constructor(address _owner, address _guardian) {
+    constructor(address _owner, address _guardian, address _tokenGuard, address _rescueVault) {
         require(_owner != address(0), "GuardWallet: invalid owner");
         require(_guardian != address(0), "GuardWallet: invalid guardian");
+        require(_tokenGuard != address(0), "GuardWallet: invalid token guard");
+        require(_rescueVault != address(0), "GuardWallet: invalid rescue vault");
         owner = _owner;
         guardian = _guardian;
+        tokenGuard = ITokenGuard(_tokenGuard);
+        rescueVault = _rescueVault;
+    }
+
+    function ownerAddress() external view returns (address) {
+        return owner;
+    }
+
+    function guardianAddress() external view returns (address) {
+        return guardian;
     }
 
     function setGuardian(address newGuardian) external onlyOwner {

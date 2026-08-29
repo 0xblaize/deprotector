@@ -6,10 +6,8 @@ describe('GuardWallet', function () {
     const [owner, guardian, recipient] = await ethers.getSigners();
     const tokenGuard = await ethers.deployContract('TokenGuard');
     await tokenGuard.waitForDeployment();
-    const wallet = await ethers.deployContract('GuardWallet', [owner.address, guardian.address]);
+    const wallet = await ethers.deployContract('GuardWallet', [owner.address, guardian.address, await tokenGuard.getAddress(), recipient.address]);
     await wallet.waitForDeployment();
-    await wallet.setTokenGuard(await tokenGuard.getAddress());
-    await wallet.setRescueVault(recipient.address);
     return { owner, guardian, recipient, tokenGuard, wallet };
   }
 

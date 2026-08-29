@@ -20,9 +20,7 @@ contract GuardFactory {
     function deployGuardWallet(address rescueVault) external returns (address wallet) {
         require(walletForOwner[msg.sender] == address(0), "GuardFactory: wallet already exists");
         require(rescueVault != address(0), "GuardFactory: invalid rescue vault");
-        GuardWallet created = new GuardWallet(msg.sender, guardian);
-        created.setTokenGuard(tokenGuard);
-        created.setRescueVault(rescueVault);
+        GuardWallet created = new GuardWallet(msg.sender, guardian, tokenGuard, rescueVault);
         wallet = address(created);
         walletForOwner[msg.sender] = wallet;
         emit GuardWalletCreated(msg.sender, wallet, tokenGuard);

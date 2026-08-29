@@ -14,6 +14,11 @@ export function startMempoolStream() {
         }
         const wsProvider = new ethers.providers.WebSocketProvider(primary.wsRpc);
 
+        wsProvider.on('error', error => {
+            console.error('[Mempool Streamer] WebSocket connection failed; monitoring is disabled:', error.message);
+            wsProvider.destroy();
+        });
+
         wsProvider.on('pending', async (txHash: string) => {
             try {
                 const tx = await wsProvider.getTransaction(txHash);
