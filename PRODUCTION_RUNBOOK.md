@@ -28,6 +28,7 @@ Set Vercel variables:
 ```env
 NEXT_PUBLIC_APP_URL=https://your-website.example.com
 NEXT_PUBLIC_CHROME_WEB_STORE_URL=https://chromewebstore.google.com/detail/your-extension-id
+NEXT_PUBLIC_APPROVAL_TARGETS=token-address:spender-address:SYMBOL
 ```
 
 The Web Store variable stays empty until the extension is published. Until then, `/phishing-shield` serves the free unpackable ZIP.
@@ -116,6 +117,10 @@ When a Chrome Web Store developer account is available:
 7. Redeploy the website.
 
 The website cannot silently install a Chrome extension. The Web Store provides the normal **Add to Chrome** flow.
+
+## Approval protection
+
+Set `NEXT_PUBLIC_APPROVAL_TARGETS` only with verified token and spender addresses. Each entry uses `token-address:spender-address:SYMBOL`. After a wallet connects, the dashboard reads `allowance(owner, spender)` with `eth_call`. A revoke button prepares `approve(spender, 0)` and opens the user's wallet for review and signature. The application never receives a private key.
 
 ## 5. Prepare smart contracts
 
