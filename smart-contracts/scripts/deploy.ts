@@ -21,10 +21,8 @@ async function main() {
   const tokenGuard = await ethers.deployContract('TokenGuard');
   await tokenGuard.waitForDeployment();
 
-  const wallet = await ethers.deployContract('GuardWallet', [owner, guardian]);
-  await wallet.waitForDeployment();
-  await (await wallet.setTokenGuard(await tokenGuard.getAddress())).wait();
-  await (await wallet.setRescueVault(rescueVault)).wait();
+  const factory = await ethers.deployContract('GuardFactory', [guardian, await tokenGuard.getAddress()]);
+  await factory.waitForDeployment();
 
   console.log(JSON.stringify({
     network: network.name,
@@ -34,7 +32,7 @@ async function main() {
     guardian,
     rescueVault,
     tokenGuard: await tokenGuard.getAddress(),
-    guardWallet: await wallet.getAddress()
+    guardFactory: await factory.getAddress()
   }, null, 2));
 }
 

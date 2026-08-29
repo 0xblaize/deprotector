@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><head><link rel="icon" href="/icon.svg?v=4" type="image/svg+xml" /></head><body><WalletProvider>{children}</WalletProvider></body></html>;
+  return <html lang="en"><head><link rel="icon" href="/deprotector-mark.svg" type="image/svg+xml" /></head><body><WalletProvider>{children}</WalletProvider></body></html>;
 }
