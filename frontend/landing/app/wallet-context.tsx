@@ -65,9 +65,14 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
     if (!window.ethereum || !wallet) throw new Error('Connect a wallet first');
     if (!address(approval.token) || !address(approval.spender)) throw new Error('Invalid approval configuration');
     const data = `0x095ea7b3${word(approval.spender)}${word('0x0')}`;
-    await window.ethereum.request({ method: 'eth_sendTransaction', params: [{ from: wallet, to: approval.token, data }] });
-    setMessage(`Revocation submitted for ${approval.symbol}.`);
-    await refreshApprovals(wallet);
+    try {
+      await window.ethereum.request({ method: 'eth_sendTransaction', params: [{ from: wallet, to: approval.token, data }] });
+      setMessage(`Revocation submitted for ${approval.symbol}.`);
+      await refreshApprovals(wallet);
+    } catch {
+      setMessage(`Revocation was cancelled or failed for ${approval.symbol}.`);
+      throw new Error('Revocation failed');
+    }
   }
 
   return <WalletContext.Provider value={{ wallet, chainId, approvals, connect, refreshApprovals: () => refreshApprovals(), revokeApproval, message }}>{children}</WalletContext.Provider>;

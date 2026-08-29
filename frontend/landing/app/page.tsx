@@ -43,6 +43,6 @@ export default function Home() {
       <section className="hero"><h1><span>Security built into</span><span>every Onchain layer</span></h1><p>Engineered to stay resilient, controlled,<br />and uncompromised under pressure.</p><Button children="Secure wallet" /></section>
       <section className="stats"><div><b>300+</b><span>Protected wallets</span></div><div><b>99%</b><span>Threat visibility</span></div><div><b>24/7</b><span>Active monitoring</span></div></section>
     </div>
-    <div className={`menu ${menuOpen ? 'visible' : ''}`} aria-hidden={!menuOpen}><div className="menu-tex"><video ref={el => { videos.current[2] = el; }} autoPlay muted loop playsInline preload="auto"><source src={VIDEO} type="video/mp4" /></video></div><div className="menu-inner"><p>DEPROTECTOR / MENU</p><a href="/">Security</a><a href="/dashboard?view=phishing">Phishing shield</a><a href="/dashboard?view=revocation">Auto-revoke</a><a href="/dashboard">Dashboard</a><Button children="Secure system" /></div></div>
+    <div className={`menu ${menuOpen ? 'visible' : ''}`} aria-hidden={!menuOpen}><div className="menu-tex"><video ref={el => { videos.current[2] = el; }} autoPlay muted loop playsInline preload="auto"><source src={VIDEO} type="video/mp4" /></video></div><div className="menu-inner"><p>DEPROTECTOR / MENU</p><a href="/">Security</a><a href="/phishing-shield">Phishing shield</a><a href="/auto-revoke">Auto-revoke</a><a href="/dashboard">Dashboard</a><Button children="Secure system" /></div></div>
   </main>;
 }

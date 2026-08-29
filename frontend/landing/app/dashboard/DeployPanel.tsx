@@ -19,7 +19,8 @@ export default function DeployPanel() {
     if (!/^0x[a-fA-F0-9]{40}$/.test(FACTORY)) { setStatus('INVALID FACTORY CONFIGURATION'); return; }
     setStatus(`CONFIRM DEPLOYMENT ON CHAIN ${chainId || 'UNKNOWN'}`);
     try {
-      const data = `${FACTORY_DEPLOY_SELECTOR}${rescueVault.replace(/^0x/, '').padStart(64, '0')}`;
+      const vault = rescueVault || wallet;
+      const data = `${FACTORY_DEPLOY_SELECTOR}${vault.replace(/^0x/, '').padStart(64, '0')}`;
       const hash = await window.ethereum.request({ method: 'eth_sendTransaction', params: [{ from: wallet, to: FACTORY, data }] });
       setStatus(`DEPLOYMENT SUBMITTED: ${String(hash).slice(0, 12)}...`);
     } catch { setStatus('DEPLOYMENT CANCELLED'); }
