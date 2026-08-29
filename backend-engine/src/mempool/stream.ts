@@ -8,8 +8,8 @@ export function startMempoolStream() {
     console.log(`[Mempool Streamer] Primary network: ${primary.name}`);
 
     try {
-        if (!primary.wsRpc) {
-            console.warn('[Mempool Streamer] No primary WebSocket RPC configured; monitoring is disabled.');
+        if (!primary.wsRpc || !/^wss?:\/\//i.test(primary.wsRpc)) {
+            console.warn('[Mempool Streamer] No valid primary WebSocket RPC configured; monitoring is disabled.');
             return;
         }
         const wsProvider = new ethers.providers.WebSocketProvider(primary.wsRpc);
