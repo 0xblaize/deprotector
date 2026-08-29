@@ -55,3 +55,4 @@ tmp/
 # Antigravity & Agent Temporary Data
 .gemini/
 .brain/
+.claude/
