@@ -1,364 +1,178 @@
-# Deprotector production runbook
+# Deprotector production deployment
 
-This is the complete setup order for deploying the current defensive MVP. The system is split into four parts because each part has a different runtime:
+## Architecture
 
 ```text
 Website       -> Vercel
-Backend API   -> Railway, Render, Fly.io, Cloud Run, or similar Node host
-Chrome shield -> Chrome Web Store, or free Developer Mode ZIP before publication
-Contracts     -> Botchain testnet first, then mainnet after review
+Backend API   -> Railway / Render / Fly.io / Cloud Run
+Chrome shield -> Chrome Web Store when published
+Smart account -> Botchain testnet, then mainnet after audit
 ```
 
-The current protection model is defensive and user-authorized. It does not custody private keys, sign for ordinary user wallets, or guarantee automatic rescue of arbitrary EOAs.
+The current system is defensive: it detects threats, blocks known phishing domains, monitors signals, and requires user authorization for wallet actions. It does not custody private keys or sign for ordinary wallets.
 
-## 0. Before deployment
+## 1. Deploy the website
 
-Obtain and verify:
-
-- Official Botchain network name.
-- Official Botchain chain ID.
-- Official Botchain HTTPS RPC URL.
-- Official Botchain WebSocket RPC URL, if supported.
-- Website domain.
-- Backend API domain.
-- Database or Redis service, if persistence is enabled.
-- Chrome Web Store developer account, when affordable.
-- Testnet owner, guardian, rescue-vault, and deployer addresses.
-- Separate RPC credentials for production and testnet.
-
-Never guess a chain ID or RPC URL. Never commit private keys.
-
-## 1. Repository structure
-
-```text
-deprotector/
-├── frontend/                 # Vercel website project root
-│   ├── package.json
-│   ├── package-lock.json
-│   └── landing/              # Next.js app
-│       ├── app/
-│       └── public/
-├── backend-engine/           # Node/Express API service
-│   ├── package.json
-│   ├── .env.example
-│   └── src/
-├── web-extension/            # Manifest V3 Chrome extension
-│   ├── manifest.json
-│   ├── background.js
-│   ├── content.js
-│   ├── popup/
-│   ├── options/
-│   ├── icons/
-│   └── rules/
-├── smart-contracts/           # Hardhat contract project
-│   ├── package.json
-│   ├── hardhat.config.ts
-│   ├── contracts/
-│   ├── scripts/
-│   └── test/
-├── .env.example
-└── PRODUCTION_RUNBOOK.md
-```
-
-Do not deploy the repository root as the website. The website root is `frontend`.
-
-## 2. Website deployment: Vercel
-
-Create a Vercel project connected to the repository.
-
-Set:
+Vercel project settings:
 
 ```text
 Root Directory: frontend
-Framework Preset: Next.js
+Framework: Next.js
 Install Command: npm install
 Build Command: npm run build
 Output Directory: .next
 ```
 
-The build script runs the Next app from `frontend/landing` and writes the output to the Vercel-facing `frontend/.next` directory.
-
-Add this Vercel environment variable:
+Set Vercel variables:
 
 ```env
 NEXT_PUBLIC_APP_URL=https://your-website.example.com
-```
-
-After Chrome Web Store publication, add:
-
-```env
 NEXT_PUBLIC_CHROME_WEB_STORE_URL=https://chromewebstore.google.com/detail/your-extension-id
 ```
 
-If that variable is absent, `/phishing-shield` provides the free ZIP fallback.
+The Web Store variable stays empty until the extension is published. Until then, `/phishing-shield` serves the free unpackable ZIP.
 
-Deploy and verify:
+## 2. Deploy the backend
 
-```text
-/
-/dashboard
-/phishing-shield
-/auto-revoke
-```
-
-The website must not show an “Add to Chrome” Web Store link until the listing URL is real.
-
-## 3. Backend deployment
-
-Deploy `backend-engine` as a separate long-running Node service.
-
-Service settings:
+Use `backend-engine` as the service root:
 
 ```text
-Root Directory: backend-engine
-Install Command: npm install
-Build Command: npm run build
-Start Command: npm start
+Install: npm install
+Build: npm run build
+Start: npm start
 ```
 
-Create backend environment variables from `.env.example`.
-
-Minimum Botchain configuration:
+Set production variables in the host secret manager:
 
 ```env
 PORT=4000
-BOTCHAIN_NETWORK_NAME=official-name
-BOTCHAIN_CHAIN_ID=official-chain-id
-BOTCHAIN_HTTP_RPC_URL=https://official-rpc
-BOTCHAIN_WS_RPC_URL=wss://official-websocket-rpc
+BOTCHAIN_NETWORK_NAME=official-botchain-name
+BOTCHAIN_CHAIN_ID=official-botchain-chain-id
+BOTCHAIN_HTTP_RPC_URL=https://official-botchain-rpc
+BOTCHAIN_WS_RPC_URL=wss://official-botchain-ws-rpc
 BOTCHAIN_IS_L2=true
-```
-
-Optional secondary networks can be added only with verified values:
-
-```env
-ETH_NETWORK_NAME=
-ETH_CHAIN_ID=
-ETH_HTTP_RPC_URL=
-ETH_WS_RPC_URL=
-BASE_NETWORK_NAME=
-BASE_CHAIN_ID=
-BASE_HTTP_RPC_URL=
-BASE_WS_RPC_URL=
-ROBINHOOD_NETWORK_NAME=
-ROBINHOOD_CHAIN_ID=
-ROBINHOOD_HTTP_RPC_URL=
-ROBINHOOD_WS_RPC_URL=
-```
-
-Backend security variables:
-
-```env
 TELEMETRY_API_KEY=long-random-secret
 CORS_ORIGIN=https://your-website.example.com
 REDIS_URL=
 DATABASE_URL=
 ```
 
-Do not set these for the current alert-only MVP:
+Use only official Botchain values. Do not guess RPC URLs or chain IDs.
 
-```env
-GUARDIAN_PRIVATE_KEY=
-FLASHBOTS_RELAY_KEY=
-```
-
-Verify after deployment:
+Verify:
 
 ```text
 GET https://your-api.example.com/health
 ```
 
-A configured primary network should report `READY`. Without Botchain values it should report `CONFIGURATION_REQUIRED`, not pretend to be fully online.
+Expected configured response:
 
-## 4. Connect website and extension to backend
-
-In the extension Options page, set:
-
-```text
-Backend base URL: https://your-api.example.com
-Security console URL: https://your-website.example.com/dashboard
+```json
+{
+  "status": "READY",
+  "primaryNetwork": "botchain"
+}
 ```
 
-The extension sends telemetry to:
+## 3. Configure the Chrome extension
 
-```text
-POST https://your-api.example.com/api/telemetry/flag-threat
-```
+The extension source is `web-extension`.
 
-The backend must use HTTPS in production. Restrict CORS to the website domain and do not expose administrative endpoints publicly.
-
-## 5. Free Chrome Developer Mode installation
-
-Until the Web Store listing is published, users can download the package from:
+Before Chrome Web Store publication, the website download is:
 
 ```text
 https://your-website.example.com/downloads/deprotector-chrome-shield.zip
 ```
 
-The ZIP has `manifest.json` at its root and includes `INSTALL.md`.
+The ZIP has `manifest.json` at its root and can be loaded in Chrome Developer Mode.
 
-User steps:
+After installation, open Extension options and set:
 
-1. Download the ZIP.
-2. Extract it.
-3. Open `chrome://extensions`.
-4. Enable Developer mode.
-5. Select **Load unpacked**.
-6. Choose the extracted folder containing `manifest.json`.
-7. Open Extension options.
-8. Set the production backend and dashboard URLs.
-9. Pin the extension.
-
-The ZIP must be refreshed whenever extension files change:
-
-```bash
-python -c "import zipfile,pathlib; root=pathlib.Path('web-extension'); files=[p for p in root.rglob('*') if p.is_file() and 'video-monitor.html' not in str(p) and 'videoSync.js' not in str(p) and 'filters.svg' not in str(p) and 'STORE_SUBMISSION.md' not in str(p)]; out=pathlib.Path('frontend/landing/public/downloads/deprotector-chrome-shield.zip'); z=zipfile.ZipFile(out,'w',zipfile.ZIP_DEFLATED); [z.write(p,p.relative_to(root)) for p in files]; z.close()"
+```text
+Backend base URL: https://your-api.example.com
+Security console URL: https://your-website.example.com/dashboard
+Telemetry API key: same value as TELEMETRY_API_KEY
 ```
 
-## 6. Chrome Web Store publication
+The extension provides:
 
-When you can pay for the developer account:
+- Local phishing blocklist checks.
+- Suspicious Web3 page-signal detection.
+- Current-site status in the popup.
+- Persistent blocked-site count.
+- Optional authenticated telemetry.
+- Botchain-first status display.
 
-1. Create the developer account.
-2. Upload a ZIP containing `web-extension` contents with `manifest.json` at the root.
-3. Provide privacy disclosures for URL checks, page heuristics, and optional telemetry.
-4. Add screenshots, support contact, category, and store description.
-5. Explain every requested permission.
-6. Submit for review.
-7. Copy the approved listing URL.
-8. Set `NEXT_PUBLIC_CHROME_WEB_STORE_URL` in Vercel.
-9. Redeploy the website.
+## 4. Publish the extension later
 
-The website cannot silently install a Chrome extension. The Web Store is the normal user installation path.
+When a Chrome Web Store developer account is available:
 
-## 7. Smart-contract deployment
+1. Upload the contents of `web-extension` as a ZIP.
+2. Keep `manifest.json` at the ZIP root.
+3. Provide privacy and permission disclosures.
+4. Add screenshots and support information.
+5. Submit for review.
+6. Put the approved listing URL into `NEXT_PUBLIC_CHROME_WEB_STORE_URL`.
+7. Redeploy the website.
 
-The current contracts are prototypes, not audited ERC-4337 production accounts.
+The website cannot silently install a Chrome extension. The Web Store provides the normal **Add to Chrome** flow.
 
-Install and test:
+## 5. Prepare smart contracts
 
-```bash
-npm --prefix smart-contracts install
-npm --prefix smart-contracts run preflight
-```
+The contract project is `smart-contracts`.
 
-For testnet deployment, configure a separate contract environment:
+Required deployment variables:
 
 ```env
 BOTCHAIN_HTTP_RPC_URL=https://official-testnet-rpc
 BOTCHAIN_CHAIN_ID=official-testnet-chain-id
 DEPLOYER_PRIVATE_KEY=testnet-only-key
-OWNER_ADDRESS=testnet-owner
-GUARDIAN_ADDRESS=testnet-guardian
-RESCUE_VAULT_ADDRESS=testnet-user-controlled-vault
+OWNER_ADDRESS=owner-address
+GUARDIAN_ADDRESS=guardian-address
+RESCUE_VAULT_ADDRESS=user-controlled-vault
 ```
 
-The current deploy script requires `GUARDIAN_ADDRESS` and deploys `TokenGuard` followed by `GuardWallet`.
+Run the deployment preflight in the contract service:
 
-Do not deploy to mainnet until:
+```bash
+npm install
+npm run preflight
+```
 
-- Contract tests cover all owner and guardian paths.
-- Guardian and rescue vault governance is reviewed.
-- TokenGuard integration is tested.
-- Reentrancy and ERC-20 return behavior are tested.
-- The contract is independently audited.
-- The deployer key is held in a secure secret manager.
-- The rescue vault is controlled by the intended owner or multisig.
+Deploy only after preflight passes:
 
-## 8. What the anti-drainer bot does in production
+```bash
+npm run deploy
+```
 
-Current safe flow:
+The deployment script validates the chain ID, deploys `TokenGuard`, deploys `GuardWallet`, links the registry, configures the rescue vault, and prints deployed addresses.
+
+## 6. Contract safety gate
+
+The current `GuardWallet` is a bounded prototype, not a complete ERC-4337 account. Do not use it with mainnet funds until:
+
+- Contract compilation and tests pass.
+- Blacklist enforcement is tested.
+- Freeze and rescue behavior is tested.
+- Guardian governance is reviewed.
+- The rescue vault is owner-controlled or multisig-controlled.
+- An independent security audit is complete.
+- Testnet behavior is verified.
+
+## 7. Final production checks
 
 ```text
-Extension checks domain
-        -> local blocklist or heuristic signal
-        -> optional authenticated telemetry
-        -> backend records threat signal
-        -> configured Botchain monitor observes supported activity
-        -> dashboard presents status
-        -> user reviews and authorizes any wallet transaction
-```
-
-The current bot does not:
-
-- Sign for arbitrary user wallets.
-- Replace an EOA transaction without the user’s signature.
-- Automatically transfer user assets.
-- Guarantee a protection percentage.
-- Override a malicious signature after it has been authorized.
-
-The GuardWallet prototype can enforce policies only for assets held by that smart account. It cannot retroactively control an ordinary MetaMask EOA.
-
-## 9. Pre-launch tests
-
-Website:
-
-```bash
-npm --prefix frontend run build
-```
-
-Backend:
-
-```bash
-npm --prefix backend-engine run build
-```
-
-Extension:
-
-```bash
-node --check web-extension/background.js
-node --check web-extension/content.js
-node --check web-extension/popup/popup.js
-node --check web-extension/options/options.js
-```
-
-Contracts:
-
-```bash
-npm --prefix smart-contracts run build
-npm --prefix smart-contracts test
-```
-
-Manual tests:
-
-- Open the website on desktop and mobile.
-- Connect a wallet on Dashboard.
-- Open another Deprotector tab and confirm the wallet state is shared.
-- Open Phishing Shield and download the ZIP.
-- Extract the ZIP and load it in Chrome Developer Mode.
-- Visit a safe page and confirm the popup reports a safe/ready state.
-- Use a controlled test domain from the blocklist and confirm warning redirect.
-- Disable the backend and confirm the extension reports offline, not live.
-- Test extension options persistence.
-- Test contracts on a testnet only.
-
-## 10. Production launch order
-
-```text
-1. Verify Botchain network details.
-2. Deploy backend with HTTPS and environment variables.
-3. Verify backend /health.
-4. Deploy website to Vercel with Root Directory = frontend.
-5. Configure the extension with production URLs.
-6. Refresh and publish/download the extension package.
-7. Test website + extension + backend together.
-8. Deploy GuardWallet contracts to testnet.
-9. Run contract tests and security review.
-10. Publish contracts only after approval.
-11. Publish Chrome Web Store listing when affordable.
-12. Replace ZIP fallback with official Add to Chrome URL.
-```
-
-## 11. Never upload or commit
-
-```text
-.env
-.env.* except .env.example
-private keys
-node_modules
-.next
-frontend/.next
-backend-engine/dist when not required
-local caches
-wallet seed phrases
+[ ] Official Botchain details verified
+[ ] Backend deployed with HTTPS
+[ ] /health returns READY
+[ ] TELEMETRY_API_KEY configured
+[ ] CORS restricted to website origin
+[ ] Website deployed from frontend
+[ ] Website routes work: /, /dashboard, /phishing-shield, /auto-revoke
+[ ] Extension ZIP contains root manifest.json
+[ ] Extension options point to production API and website
+[ ] Contract preflight passes
+[ ] Contracts tested on Botchain testnet
+[ ] Smart-account audit completed before mainnet
+[ ] No .env, private keys, node_modules, or .next uploaded
 ```
