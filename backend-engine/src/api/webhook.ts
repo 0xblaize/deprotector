@@ -1,6 +1,11 @@
 import express, { Request, Response } from 'express';
 
 export const apiRouter = express.Router();
+
+apiRouter.get('/', (_req: Request, res: Response) => {
+    res.json({ endpoints: ['POST /api/telemetry/flag-threat', 'GET /api/telemetry/status/:wallet'] });
+});
+
 const HIGH_THREAT_WALLETS = new Map<string, { domain: string; timestamp: number; network?: string }>();
 const RECENT_EVENTS = new Map<string, number>();
 const API_KEY = process.env.TELEMETRY_API_KEY;

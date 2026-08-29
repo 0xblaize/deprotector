@@ -42,7 +42,8 @@ if (configuredNetworks.length === 0) {
 export const CONFIG = {
     port: Number(process.env.PORT || 4000),
     guardianPrivateKey: process.env.GUARDIAN_PRIVATE_KEY,
-    flashbotsRelayKey: process.env.FLASHBOTS_RELAY_KEY
+    flashbotsRelayKey: process.env.FLASHBOTS_RELAY_KEY,
+    corsOrigin: process.env.CORS_ORIGIN || '*'
 };
 
 if (!CONFIG.guardianPrivateKey) console.warn('[Config] Guardian signing is disabled; user authorization is required.');
