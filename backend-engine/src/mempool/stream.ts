@@ -13,11 +13,12 @@ export function startMempoolStream() {
             return;
         }
         const wsProvider = new ethers.providers.WebSocketProvider(primary.wsRpc);
-        const socket = (wsProvider as ethers.providers.WebSocketProvider & { _websocket?: { on: (event: string, handler: (error: Error) => void) => void } })._websocket;
-        socket?.on('error', error => {
-            console.error('[Mempool Streamer] WebSocket connection failed; monitoring is disabled:', error.message);
+                const socket = (wsProvider as ethers.providers.WebSocketProvider & { _websocket?: { on: (event: string, handler: (error: any) => void) => void } })._websocket;
+        socket?.on('error', (error: any) => {
+            console.error('[Mempool Streamer] WebSocket connection failed; monitoring is disabled:', error?.message);
             wsProvider.destroy();
         });
+
 
         wsProvider.on('error', error => {
             console.error('[Mempool Streamer] Provider connection failed; monitoring is disabled:', error.message);
