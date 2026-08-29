@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('botchain-status').textContent = health?.primaryNetwork === 'botchain' ? 'PRIMARY / READY' : 'CONFIGURATION REQUIRED';
 
   document.getElementById('dashboard-btn').addEventListener('click', async () => {
-    const settings = await chrome.storage.sync.get({ dashboardUrl: 'http://localhost:3000/dashboard' });
+    const settings = await chrome.storage.sync.get({ dashboardUrl: 'https://0xprotector.vercel.app/dashboard' });
     chrome.tabs.create({ url: settings.dashboardUrl });
   });
   document.getElementById('settings-btn').addEventListener('click', () => chrome.runtime.openOptionsPage());
@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 async function fetchHealth() {
   const settings = await chrome.storage.sync.get(['apiBaseUrl']);
-  const baseUrl = settings.apiBaseUrl || 'http://localhost:4000';
+  const baseUrl = settings.apiBaseUrl || 'https://deprotector.onrender.com';
   try {
     const response = await fetch(`${baseUrl}/health`);
     if (!response.ok) return null;

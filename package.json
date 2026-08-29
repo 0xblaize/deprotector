@@ -17,8 +17,9 @@
     "build:contracts": "cd smart-contracts && npm run build",
     "dev:landing":     "cd frontend/landing && npm run dev",
     "build:landing":   "cd frontend/landing && npm run build",
-    "build":           "npm run build:landing",
-    "start":           "cd frontend && npm start"
+    "build":           "npm run build:landing && npm run build:backend",
+    "build:backend":   "cd backend-engine && npm run build",
+    "start":           "npm run start:backend"
   },
   "keywords": [
     "security",
