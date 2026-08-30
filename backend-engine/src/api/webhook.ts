@@ -1,9 +1,15 @@
 import express, { Request, Response } from 'express';
+import { listSecurityEvents, recordSecurityEvent } from '../events';
 
 export const apiRouter = express.Router();
 
 apiRouter.get('/', (_req: Request, res: Response) => {
-    res.json({ endpoints: ['POST /api/telemetry/flag-threat', 'GET /api/telemetry/status/:wallet'] });
+    res.json({ endpoints: ['GET /api/events', 'POST /api/telemetry/flag-threat', 'GET /api/telemetry/status/:wallet'] });
+});
+
+apiRouter.get('/events', (req: Request, res: Response) => {
+    const wallet = typeof req.query.wallet === 'string' ? req.query.wallet : undefined;
+    return res.json({ events: listSecurityEvents(wallet) });
 });
 
 const HIGH_THREAT_WALLETS = new Map<string, { domain: string; timestamp: number; network?: string }>();
@@ -30,6 +36,15 @@ apiRouter.post('/telemetry/flag-threat', (req: Request, res: Response) => {
     const previous = RECENT_EVENTS.get(dedupeKey);
     if (previous && Date.now() - previous < 30_000) return res.status(202).json({ status: 'DUPLICATE_IGNORED' });
     RECENT_EVENTS.set(dedupeKey, Date.now());
+
+    recordSecurityEvent({
+        type: 'PHISHING_SIGNAL',
+        wallet: validAddress(walletAddress) ? walletAddress.toLowerCase() : undefined,
+        domain,
+        threatLevel,
+        signatures,
+        status: 'DETECTED'
+    });
 
     if (validAddress(walletAddress)) {
         const normalizedWallet = walletAddress.toLowerCase();

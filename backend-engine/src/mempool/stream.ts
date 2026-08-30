@@ -2,6 +2,8 @@ import { ethers } from 'ethers';
 import { NETWORKS, PRIMARY_NETWORK } from '../config/networks';
 import { decodeTransactionInput } from './decoder';
 import { executeFlashbotsCountermeasure } from '../execution/ethereum_mev';
+import { recordSecurityEvent } from '../events';
+
 
 export function startMempoolStream() {
     const primary = NETWORKS[PRIMARY_NETWORK];
@@ -34,6 +36,15 @@ export function startMempoolStream() {
                 if (!decoded) return;
 
                 if (decoded.isApproval) {
+                    recordSecurityEvent({
+                        type: 'MEMPOOL_APPROVAL',
+                        wallet: tx.from,
+                        spender: decoded.spender,
+                        nonce: tx.nonce,
+                        txHash,
+                        chainId: primary.chainId,
+                        status: 'USER_AUTHORIZATION_REQUIRED'
+                    });
                     console.warn(`[Mempool Alert] Approval transaction detected in mempool. Hash: ${txHash}`);
                     console.log(`From: ${tx.from} | Spender: ${decoded.spender} | Nonce: ${tx.nonce}`);
 
