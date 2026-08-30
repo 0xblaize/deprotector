@@ -15,13 +15,20 @@ const networks = [
 ];
 
 function shorten(address: string) { return `${address.slice(0, 6)}...${address.slice(-4)}`; }
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://deprotector.onrender.com';
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE_URL || 'https://deprotector.onrender.com').trim().replace(/\/+$/, '');
 
 export default function Dashboard() {
   const [network, setNetwork] = useState(networks[0]);
   const [backendStatus, setBackendStatus] = useState('Checking backend...');
   useEffect(() => {
-    fetch(`${API_BASE}/health`).then(response => response.json()).then(data => setBackendStatus(data.status === 'READY' ? 'Backend ready' : `Backend online · ${data.status}`)).catch(() => setBackendStatus('Backend unreachable'));
+    fetch(`${API_BASE}/health`, { cache: 'no-store' })
+      .then(async response => {
+        const data = await response.json().catch(() => null);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return data;
+      })
+      .then(data => setBackendStatus(data?.status === 'READY' ? `Backend ready · monitoring ${data.monitoring || 'unknown'}` : `Backend online · ${data?.status || 'unknown'}`))
+      .catch(error => setBackendStatus(`Backend request failed · ${error instanceof Error ? error.message : 'unknown error'}`));
   }, []);
   const { wallet, chainId, connect, approvals, refreshApprovals, revokeApproval, message } = useWallet();
   const selectedConfigured = network.chainId !== undefined;

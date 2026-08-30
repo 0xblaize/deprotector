@@ -1,16 +1,25 @@
+const DEFAULTS = {
+  apiBaseUrl: "https://deprotector.onrender.com",
+  dashboardUrl: "https://0xprotector.vercel.app/dashboard",
+  blocklistShield: true,
+  heuristicShield: true,
+  l2PreemptiveShield: true
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   const saveBtn = document.getElementById("saveBtn");
   const statusMsg = document.getElementById("statusMsg");
 
-  // Load saved options
-  chrome.storage.sync.get(["apiBaseUrl", "apiKey", "dashboardUrl", "blocklistShield", "heuristicShield", "l2PreemptiveShield"], (items) => {
-    if (items.apiBaseUrl) document.getElementById("apiUrl").value = items.apiBaseUrl;
-    if (items.apiKey) document.getElementById("apiKey").value = items.apiKey;
-    if (items.dashboardUrl) document.getElementById("dashboardUrl").value = items.dashboardUrl;
-    if (items.blocklistShield !== undefined) document.getElementById("blocklistShield").checked = items.blocklistShield;
-    if (items.heuristicShield !== undefined) document.getElementById("heuristicShield").checked = items.heuristicShield;
-    if (items.l2PreemptiveShield !== undefined) document.getElementById("l2PreemptiveShield").checked = items.l2PreemptiveShield;
+  chrome.storage.sync.get({ ...DEFAULTS, apiKey: "" }, (items) => {
+    document.getElementById("apiUrl").value = items.apiBaseUrl;
+    document.getElementById("apiKey").value = items.apiKey;
+    document.getElementById("dashboardUrl").value = items.dashboardUrl;
+    document.getElementById("blocklistShield").checked = items.blocklistShield;
+    document.getElementById("heuristicShield").checked = items.heuristicShield;
+    document.getElementById("l2PreemptiveShield").checked = items.l2PreemptiveShield;
   });
+
+
 
   saveBtn.addEventListener("click", () => {
     const apiBaseUrl = document.getElementById("apiUrl").value.replace(/\/$/, '');
