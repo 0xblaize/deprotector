@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { listSecurityEvents, recordSecurityEvent } from '../events';
+import { discoverApprovals } from '../approvalScanner';
 
 export const apiRouter = express.Router();
 

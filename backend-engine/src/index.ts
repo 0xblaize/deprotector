@@ -2,6 +2,8 @@ import express from 'express';
 import { CONFIG, NETWORKS, PRIMARY_NETWORK } from './config/networks';
 import { apiRouter } from './api/webhook';
 import { startMempoolStream } from './mempool/stream';
+import { approvalsRouter } from './api/approvals';
+
 
 function cors(req: express.Request, res: express.Response, next: express.NextFunction) {
     const origin = req.get('origin');
@@ -29,6 +31,7 @@ app.set('monitoringStatus', monitoringStatus);
 
 // Register telemetry webhook endpoints
 app.use('/api', apiRouter);
+app.use('/api/approvals', approvalsRouter);
 
 app.get('/health', (req, res) => {
     const primary = NETWORKS[PRIMARY_NETWORK];
