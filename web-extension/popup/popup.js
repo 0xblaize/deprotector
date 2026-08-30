@@ -43,10 +43,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 async function fetchHealth() {
-  const settings = await chrome.storage.sync.get(['apiBaseUrl']);
-  const baseUrl = settings.apiBaseUrl || 'https://deprotector.onrender.com';
   try {
-    const response = await fetch(`${baseUrl}/health`);
+    const response = await fetch(`${API_BASE_URL}/health`);
     if (!response.ok) return null;
     return await response.json();
   } catch {

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Deprotector Anti-Drainer Shield",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Real-time Web3 Phishing Shield & Counter-Drainer Telemetry Bridge",
   "permissions": [
     "tabs",
