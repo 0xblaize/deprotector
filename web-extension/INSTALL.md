@@ -11,13 +11,16 @@ This folder is a Manifest V3 Chrome extension. It can be installed free through 
 5. Select this folder, the one containing `manifest.json`.
 6. Pin the Deprotector icon to your toolbar.
 
-## Configure
+## Integrated services
 
-1. Open the extension details.
-2. Open **Extension options**.
-3. Set the backend base URL if a production API is available.
-4. Set the security console URL.
-5. Keep blocklist and heuristic protection enabled.
+The packaged extension is preconfigured to use the Deprotector backend and security console:
+
+- Backend: `https://deprotector.onrender.com`
+- Security console: `https://0xprotector.vercel.app/dashboard`
+
+No manual URL configuration is required. Keep blocklist and heuristic protection enabled.
+
+The extension contains no private keys or backend secrets.
 
 ## Privacy and safety
 

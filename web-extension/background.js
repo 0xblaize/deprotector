@@ -1,9 +1,8 @@
-const DEFAULT_API_BASE_URL = 'https://deprotector.onrender.com';
+const API_BASE_URL = 'https://deprotector.onrender.com';
 let BANNED_DOMAINS = [];
 
 async function getSettings() {
   return chrome.storage.sync.get({
-    apiBaseUrl: DEFAULT_API_BASE_URL,
     blocklistShield: true,
     heuristicShield: true
   });
@@ -35,9 +34,9 @@ async function recordBlockedSite() {
 async function dispatchTelemetryAlert(domain, threatLevel, signatures = []) {
   const settings = await getSettings();
   try {
-    await fetch(`${settings.apiBaseUrl}/api/telemetry/flag-threat`, {
+    await fetch(`${API_BASE_URL}/api/telemetry/flag-threat`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', ...(settings.apiKey ? { 'x-api-key': settings.apiKey } : {}) },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ domain, threatLevel, signatures, timestamp: Date.now() })
     });
   } catch (error) {

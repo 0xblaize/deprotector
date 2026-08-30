@@ -1,3 +1,6 @@
+const API_BASE_URL = 'https://deprotector.onrender.com';
+const DASHBOARD_URL = 'https://0xprotector.vercel.app/dashboard';
+
 document.addEventListener('DOMContentLoaded', async () => {
   const tab = (await chrome.tabs.query({ active: true, currentWindow: true }))[0];
   const hostname = tab?.url ? new URL(tab.url).hostname : 'Unavailable';
@@ -31,11 +34,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('backend-status').textContent = health ? 'Backend online' : 'Backend offline';
   document.getElementById('botchain-status').textContent = health?.primaryNetwork === 'botchain' ? 'PRIMARY / READY' : 'CONFIGURATION REQUIRED';
 
-  document.getElementById('dashboard-btn').addEventListener('click', async () => {
-    const settings = await chrome.storage.sync.get({ dashboardUrl: 'https://0xprotector.vercel.app/dashboard' });
-    chrome.tabs.create({ url: settings.dashboardUrl });
+  document.getElementById('dashboard-btn').addEventListener('click', () => {
+    chrome.tabs.create({ url: DASHBOARD_URL });
   });
-  document.getElementById('settings-btn').addEventListener('click', () => chrome.runtime.openOptionsPage());
+  document.getElementById('settings-btn').addEventListener('click', () => {
+    chrome.tabs.create({ url: `${DASHBOARD_URL}?source=extension` });
+  });
 });
 
 async function fetchHealth() {
