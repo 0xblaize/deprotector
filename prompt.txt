@@ -1,0 +1,18 @@
+DEPROTECTOR
+
+A defensive Web3 security platform that detects phishing sites, suspicious wallet approvals, and risky spender contracts.
+
+Uses:
+- Next.js, React, TypeScript frontend
+- Express, Node.js, ethers.js backend
+- WebSocket RPC mempool monitoring
+- Multi-chain approval scanning
+- Chrome Manifest V3 security extension
+- Solidity smart contracts with Hardhat
+
+Services:
+- Frontend: Vercel
+- Backend: Render
+- Networks: Botchain, Ethereum, Base, and Robinhood Chain
+
+Users always approve wallet transactions themselves. Private keys are never collected.
